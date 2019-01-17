@@ -68,8 +68,8 @@ module.exports = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('[name].css'),
-    ...(htmlPluginConfig)
+    ...htmlPluginConfig,
+    new ExtractTextPlugin('[name].css')
   ]
 }
 

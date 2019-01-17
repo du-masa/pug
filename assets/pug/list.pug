@@ -1,4 +1,13 @@
+- var title = 'indexLogo1'
+mixin list(name, name2)
+  ul
+    each item in name
+      li #{item} #{name2}
+
 html
   head
   body
-    h1 list
+    include ./common/_header.pug
+    main.list
+      +list(['item1', 'item2', 'item3'], 'class')
+      +list(['name2'], 'class')

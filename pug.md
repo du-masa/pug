@@ -1,20 +1,10 @@
 # pug
 
-## pugとは
-
-Node.js製のテンプレートエンジン(旧名:jade)
-https://pugjs.org/api/getting-started.html
-
-pugのメリットは下記です。
-- タグで囲んだり、属性値を省略して書くことが可能で、記述をシンプルになる
-- ファイルを分割して、includeすることで、可読性や再利用性が高まる
-- 変数、if文、ループ文を使うことができる
-
 ## pugの環境設定
 
 今回は、webpackを使ったpugのコンパイル(HTMLファイル化)を紹介します。
 
-### モジュールインストール
+## モジュールインストール
 
 下記のモジュールをインストールします。
 
@@ -22,7 +12,7 @@ pugのメリットは下記です。
 $ npm i -D pug pug-loader html-webpack-plugin
 ```
 
-### webpackに設定
+## webpackに設定
 
 `.pug`ファイルをpug-loaderを使ってコンパイルします。
 
@@ -65,3 +55,51 @@ $ npm i -D pug pug-loader html-webpack-plugin
 (`filename`を指定しなかった場合はindex.htmlになります)
 
 
+## pugファイルの自動検出
+
+`html-webpack-plugin`を使えばHTMLの出力はできるのですが、ページ数が増えた時にいちいち追加設定をするのが面倒です。
+そのために自動で読み込めるようにスクリプトを追加してましょう
+
+こちらの内容は[webpack.config.autoload.js](https://github.com/du-masa/pug/blob/master/webpack.config.autoload.js)に書いてあります。
+
+13-22行目あたりのコードで設定しています。
+
+```js
+const from = 'pug';
+const to = 'html';
+const htmlPluginConfig = globule.find([`**/*.${from}`, `!**/_*.${from}`], {cwd: opts.srcDir}).map(filename => {
+  const file = filename.replace(new RegExp(`.${from}$`, 'i'), `.${to}`).split('/')
+  return new HtmlWebpackPlugin({
+    filename: filename.replace(new RegExp(`.${from}$`, 'i'), `.${to}`).replace(/(\.\/)?pug/, '.'),
+    template: `./${filename}`
+  })
+})
+```
+
+[globule](https://www.npmjs.com/package/globule)というnpmのモジュールを使って、該当のpugファイルを抽出しています。
+戻り値は、該当のファイル名が入った配列なので、そのファイル名１つ１つに`html-webpack-plugin`の設定をしています。(設定一つ一つを配列に格納 => htmlPluginConfig)
+
+
+あとはhtmlPluginConfigをwebpackのpluginsに設定することで自動的にpugファイルが増えてもHTMLを出力してくれるようになります。(70行目あたり)
+```js
+  plugins: [
+    ...htmlPluginConfig,
+```
+
+## vue componentでpugを使う
+
+vue componentのtemplateにHTMLではなくpugを使う場合は、
+npm から pug本体をインストールするだけで使えるようになります。
+
+```bash
+$ npm i -D pug
+```
+
+pugをインストールした状態で、vueコンポーネントにpugを使う宣言をします。
+
+```html
+<template lang="pug">
+</template>
+```
+
+参考: https://vue-loader-v14.vuejs.org/ja/configurations/pre-processors.html

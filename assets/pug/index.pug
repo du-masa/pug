@@ -1,6 +1,18 @@
-html
-  head
-  body
-    h1 Hello!
-    div#app
-      sample
+extends _layout.pug
+block variables
+  - var title = 'index'
+
+block append scripts
+  script(src="vue.js")
+block content
+  include mixin/_list.pug
+    +list(['item1', 'item2', 'item3'])
+    +list(['item4', 'item5', 'item6'])
+  div#index
+    section
+      p index content
+
+block foot
+  div#index-footer
+    ul
+      li
