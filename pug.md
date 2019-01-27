@@ -86,6 +86,34 @@ const htmlPluginConfig = globule.find([`**/*.${from}`, `!**/_*.${from}`], {cwd: 
     ...htmlPluginConfig,
 ```
 
+## file-loaderで画像も取り扱う
+
+file-loaderを使うことでpug内で読み込まれた画像も取り扱うことができます。
+
+```js
+  {
+    test: /.(jpe?g|png|gif|svg)/,
+    use: [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath : 'image/',
+          publicPath : 'image'
+        }
+      },
+    ]
+  }
+```
+
+pug内で画像を読み込むときは、`require`関数を使う必要があります。
+
+```pug
+  img(src=require("path/to/imagefile"))
+```
+
+https://github.com/pugjs/pug-loader#embedded-resources
+
 ## vue componentでpugを使う
 
 vue componentのtemplateにHTMLではなくpugを使う場合は、
